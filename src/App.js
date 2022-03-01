@@ -1,6 +1,9 @@
+import React from "react";
+import Form from "./components/Form";
+
 function App() {
   return (
-    <div>Oi</div>
+    <Form />
   );
 }
 
