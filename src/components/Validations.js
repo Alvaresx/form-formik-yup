@@ -25,6 +25,10 @@ function InputForm(props) {
     endereco: Yup.string().required("Endereço é obrigatório"),
     numero: Yup.string().required("Número é obrigatório"),
     nacionalidade: Yup.string().required("Nacionalidade é obrigatório"),
+    cep: Yup.string().required("CEP é obrigatório"),
+    bairro: Yup.string().required("Bairro é obrigatório"),
+    cidade: Yup.string().required("Cidade é obrigatório"),
+    estado: Yup.string().required("Estado é obrigatório")
   });
   const values = {
     nome: "",
@@ -37,6 +41,10 @@ function InputForm(props) {
     orgaoEmissor: "",
     nacionalidade: "",
     numero: "",
+    cep: "",
+    bairro: "",
+    cidade: "",
+    estado: "",
   };
 
   return (

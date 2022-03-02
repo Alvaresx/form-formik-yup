@@ -1,9 +1,18 @@
-import React from "react";
-import { TextField, Grid, Button, Paper } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import {
+  TextField,
+  Grid,
+  Button,
+  Paper,
+  MenuItem,
+  Typography,
+} from "@mui/material";
 import InputMask from "react-input-mask";
+import cep from "cep-promise";
 
 function Form(props) {
-  const [mask, setMask] = React.useState("(99) 99999-9999");
+  const [mask, setMask] = useState("(99) 99999-9999");
+  const [genero] = useState(["Cisgênero", "Transgênero", "Não binário"]);
   const {
     values: {
       nome,
@@ -16,23 +25,47 @@ function Form(props) {
       nacionalidade,
       endereco,
       numero,
+      bairro,
+      cidade,
+      estado,
     },
     errors,
     touched,
     handleChange,
     isValid,
     setFieldTouched,
+    setFieldValue,
   } = props;
+
+  useEffect(() => {}, []);
 
   const change = (element, e) => {
     e.persist();
     handleChange(e);
     setFieldTouched(element, true, false);
   };
+
+  const blur = (e) => {
+    cep(e.target.value).then((res) => {
+      setFieldValue("endereco", res.street);
+      setFieldValue("bairro", res.neighborhood);
+      setFieldValue("cidade", res.city);
+      setFieldValue("estado", res.state);
+    });
+  };
+
   return (
     <Grid container justifyContent="center">
-      <Grid item lg={6} md={7} sm={8} xs={10} sx={{ position: "relative", top: "80px", paddingBottom: "80px" }}>
+      <Grid
+        item
+        lg={6}
+        md={7}
+        sm={8}
+        xs={10}
+        sx={{ position: "relative", top: "80px", paddingBottom: "80px" }}
+      >
         <Paper elevation={3} sx={{ padding: "24px" }}>
+          <Typography>Formulário Cadastral</Typography>
           <form
             onSubmit={() => {
               alert("Enviado");
@@ -54,12 +87,19 @@ function Form(props) {
               </Grid>
               <Grid item lg={3} md={3} sm={3} xs={12}>
                 <TextField
-                  id="sexo"
-                  name="sexo"
-                  label="Sexo"
+                  select
+                  id="genero"
+                  name="genero"
+                  label="Gênero"
                   fullWidth
                   size="small"
-                />
+                >
+                  {genero.map((item) => (
+                    <MenuItem value={item} key={item}>
+                      {item}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Grid>
               <Grid item lg={3} md={6} sm={6} xs={12}>
                 <InputMask
@@ -178,9 +218,9 @@ function Form(props) {
               <Grid item lg={3} md={3} sm={6} xs={12}>
                 <InputMask
                   mask="99999-999"
-                  maskChar={
-                    null
-                  } /*onChange={formik.handleChange} value={formik.values.document}*/
+                  maskChar={null} /*value={formik.values.document}*/
+                  onChange={change.bind(null, "cep")}
+                  onBlur={(e) => blur(e)}
                 >
                   {() => (
                     <TextField
@@ -219,7 +259,7 @@ function Form(props) {
                   size="small"
                 />
               </Grid>
-              <Grid item lg={4} md={9} sm={9} xs={12}>
+              <Grid item lg={5} md={9} sm={9} xs={12}>
                 <TextField
                   id="complemento"
                   name="complemento"
@@ -228,11 +268,28 @@ function Form(props) {
                   size="small"
                 />
               </Grid>
-              <Grid item lg={3} md={3} sm={6} xs={12}>
+              <Grid item lg={4} md={4} sm={6} xs={12}>
+                <TextField
+                  id="bairro"
+                  name="bairro"
+                  helperText={touched.bairro ? errors.bairro : ""}
+                  error={touched.bairro && Boolean(errors.bairro)}
+                  label="Bairro"
+                  onChange={change.bind(null, "bairro")}
+                  value={bairro}
+                  fullWidth
+                  size="small"
+                />
+              </Grid>
+              <Grid item lg={3} md={5} sm={6} xs={12}>
                 <TextField
                   id="cidade"
                   name="cidade"
+                  helperText={touched.cidade ? errors.cidade : ""}
+                  error={touched.cidade && Boolean(errors.cidade)}
                   label="Cidade"
+                  onChange={change.bind(null, "cidade")}
+                  value={cidade}
                   fullWidth
                   size="small"
                 />
@@ -241,7 +298,11 @@ function Form(props) {
                 <TextField
                   id="estado"
                   name="estado"
+                  helperText={touched.estado ? errors.estado : ""}
+                  error={touched.estado && Boolean(errors.estado)}
                   label="Estado"
+                  onChange={change.bind(null, "estado")}
+                  value={estado}
                   fullWidth
                   size="small"
                 />

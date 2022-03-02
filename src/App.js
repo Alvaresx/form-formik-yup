@@ -3,7 +3,11 @@ import "./App.css";
 import InputForm from "./components/Validations";
 
 function App() {
-  return <InputForm />;
+  return (
+    <>
+      <InputForm />
+    </>
+  );
 }
 
 export default App;
