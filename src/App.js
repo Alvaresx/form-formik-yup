@@ -1,11 +1,11 @@
 import React from "react";
 import "./App.css";
-import InputForm from "./components/Validations";
+import FormComponent from "./components/Form";
 
 function App() {
   return (
     <>
-      <InputForm />
+      <FormComponent />
     </>
   );
 }

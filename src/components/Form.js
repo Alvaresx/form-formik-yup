@@ -1,341 +1,203 @@
-import React, { useState, useEffect } from "react";
-import {
-  TextField,
-  Grid,
-  Button,
-  Paper,
-  MenuItem,
-  Typography,
-} from "@mui/material";
-import InputMask from "react-input-mask";
+import React from "react";
+import "./Form.css";
+import { Formik, Form } from "formik";
+import * as Yup from "yup";
+import { cpf } from "cpf-cnpj-validator";
 import cep from "cep-promise";
+import { Grid, Paper, Typography } from "@mui/material";
+import TextFieldWrapper from "./FormComponents/Textfield";
+import SelectWrapper from "./FormComponents/Select";
+import ButtonSubmitWrapper from "./FormComponents/Buttons/submitIndex";
+import ButtonResetWrapper from "./FormComponents/Buttons/resetIndex";
 
-function Form(props) {
-  const [mask, setMask] = useState("(99) 99999-9999");
-  const [genero] = useState(["Cisgênero", "Transgênero", "Não binário"]);
-  const {
-    values: {
-      nome,
-      telefone,
-      email,
-      cpf,
-      dataNascimento,
-      rg,
-      orgaoEmissor,
-      nacionalidade,
-      endereco,
-      numero,
-      bairro,
-      cidade,
-      estado,
-    },
-    errors,
-    touched,
-    handleChange,
-    isValid,
-    setFieldTouched,
-    setFieldValue,
-  } = props;
+function FormComponent() {
+  const validationSchema = Yup.object({
+    nome: Yup.string().required("Nome é obrigatório"),
+    genero: Yup.string().required("Gênero é obrigatório"),
+    dataNascimento: Yup.string()
+      .required("Data de Nascimento é obrigatório")
+      .min(10, "Insira uma data válida"),
+    telefone: Yup.string()
+      .required("Telefone é obrigatório")
+      .min(14, "Insira um telefone válido!")
+      .max(15, "Insira um telefone válido!"),
+    email: Yup.string()
+      .required("E-mail é obrigatório")
+      .email("Insira um e-mail válido"),
+    rg: Yup.string().required("RG é obrigatório"),
+    orgaoEmissor: Yup.string().required("Orgão emissor é obrigatório"),
+    cpf: Yup.string()
+      .required("CPF é obrigatório")
+      .test("validCpf", "Insira um CPF válido", (value) => cpf.isValid(value)),
+    cep: Yup.string().required("CEP é obrigatório"),
+    endereco: Yup.string().required("Endereço é obrigatório"),
+    numero: Yup.string().required("Número é obrigatório"),
+    complemento: Yup.string(),
+    bairro: Yup.string().required("Bairro é obrigatório"),
+    cidade: Yup.string().required("Cidade é obrigatório"),
+    estado: Yup.string().required("Estado é obrigatório"),
+    nacionalidade: Yup.string().required("Nacionalidade é obrigatório"),
+  });
 
-  useEffect(() => {}, []);
-
-  const change = (element, e) => {
-    e.persist();
-    handleChange(e);
-    setFieldTouched(element, true, false);
+  const values = {
+    nome: "",
+    genero: "",
+    dataNascimento: "",
+    telefone: "",
+    email: "",
+    rg: "",
+    orgaoEmissor: "",
+    cpf: "",
+    cep: "",
+    endereco: "",
+    numero: "",
+    complemento: "",
+    bairro: "",
+    cidade: "",
+    estado: "",
+    nacionalidade: "",
   };
 
-  const blur = (e) => {
-    cep(e.target.value).then((res) => {
-      setFieldValue("endereco", res.street);
-      setFieldValue("bairro", res.neighborhood);
-      setFieldValue("cidade", res.city);
-      setFieldValue("estado", res.state);
-    });
+  const handleBlur = (e, setFieldValue) => {
+    if (e.target.value !== "") {
+      cep(e.target.value).then((res) => {
+        setFieldValue("endereco", res.street);
+        setFieldValue("bairro", res.neighborhood);
+        setFieldValue("cidade", res.city);
+        setFieldValue("estado", res.state);
+      });
+    }
   };
 
   return (
-    <Grid container justifyContent="center">
-      <Grid
-        item
-        lg={6}
-        md={7}
-        sm={8}
-        xs={10}
-        sx={{ position: "relative", top: "80px", paddingBottom: "80px" }}
+    <>
+      <Formik
+        initialValues={values}
+        validationSchema={validationSchema}
+        onSubmit={(values) => {
+          console.log(values);
+        }}
       >
-        <Paper elevation={3} sx={{ padding: "24px" }}>
-          <Typography>Formulário Cadastral</Typography>
-          <form
-            onSubmit={() => {
-              alert("Enviado");
-            }}
-          >
-            <Grid container spacing={2}>
-              <Grid item lg={9} md={9} sm={9} xs={12}>
-                <TextField
-                  id="nome"
-                  name="nome"
-                  helperText={touched.nome ? errors.nome : ""}
-                  error={touched.nome && Boolean(errors.nome)}
-                  label="Nome completo"
-                  value={nome}
-                  onChange={change.bind(null, "nome")}
-                  fullWidth
-                  size="small"
-                />
-              </Grid>
-              <Grid item lg={3} md={3} sm={3} xs={12}>
-                <TextField
-                  select
-                  id="genero"
-                  name="genero"
-                  label="Gênero"
-                  fullWidth
-                  size="small"
-                >
-                  {genero.map((item) => (
-                    <MenuItem value={item} key={item}>
-                      {item}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item lg={3} md={6} sm={6} xs={12}>
-                <InputMask
-                  mask="99/99/9999"
-                  maskChar={null}
-                  onChange={change.bind(null, "dataNascimento")}
-                  value={dataNascimento}
-                >
-                  {() => (
-                    <TextField
-                      id="dataNascimento"
-                      name="dataNascimento"
-                      helperText={
-                        touched.dataNascimento ? errors.dataNascimento : ""
-                      }
-                      error={
-                        touched.dataNascimento && Boolean(errors.dataNascimento)
-                      }
-                      label="Data nascimento"
-                      fullWidth
-                      size="small"
-                    />
-                  )}
-                </InputMask>
-              </Grid>
-              <Grid item lg={3} md={6} sm={6} xs={12}>
-                <InputMask
-                  mask={mask}
-                  maskChar={null}
-                  onChange={change.bind(null, "telefone")}
-                  value={telefone}
-                  onBlur={(e) => {
-                    if (e.target.value.replace("_", "").length === 14) {
-                      setMask("(99) 9999-9999");
-                    }
-                  }}
-                  onFocus={(e) => {
-                    if (e.target.value.replace("_", "").length === 14) {
-                      setMask("(99) 99999-9999");
-                    }
-                  }}
-                >
-                  {() => (
-                    <TextField
-                      id="telefone"
-                      name="telefone"
-                      helperText={touched.telefone ? errors.telefone : ""}
-                      error={touched.telefone && Boolean(errors.telefone)}
-                      label="Telefone celular"
-                      fullWidth
-                      size="small"
-                    />
-                  )}
-                </InputMask>
-              </Grid>
-              <Grid item lg={6} md={12} sm={12} xs={12}>
-                <TextField
-                  id="email"
-                  name="email"
-                  helperText={touched.email ? errors.email : ""}
-                  error={touched.email && Boolean(errors.email)}
-                  label="E-mail"
-                  onChange={change.bind(null, "email")}
-                  value={email}
-                  fullWidth
-                  size="small"
-                />
-              </Grid>
+        {({ setFieldValue }) => (
+          <Form>
+            <Grid container justifyContent="center">
+              <Grid
+                item
+                lg={6}
+                md={7}
+                sm={8}
+                xs={10}
+                className="main--grid--item"
+              >
+                <Paper elevation={3} className="paper--form">
+                  <Typography className="form--title">
+                    Formulário Cadastral
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item lg={9} md={9} sm={9} xs={12}>
+                      <TextFieldWrapper name="nome" label="Nome" />
+                    </Grid>
+                    <Grid item lg={3} md={3} sm={3} xs={12}>
+                      <SelectWrapper
+                        name="genero"
+                        label="Genero"
+                        options={["Cisgênero", "Transgênero", "Não binário"]}
+                      />
+                    </Grid>
+                    <Grid item lg={3} md={6} sm={6} xs={12}>
+                      <TextFieldWrapper
+                        name="dataNascimento"
+                        label="Data Nascimento"
+                      />
+                    </Grid>
+                    <Grid item lg={3} md={6} sm={6} xs={12}>
+                      <TextFieldWrapper name="telefone" label="Telefone" />
+                    </Grid>
+                    <Grid item lg={6} md={12} sm={12} xs={12}>
+                      <TextFieldWrapper name="email" label="E-mail" />
+                    </Grid>
 
-              <Grid item lg={4} md={4} sm={6} xs={12}>
-                <TextField
-                  id="rg"
-                  name="rg"
-                  helperText={touched.rg ? errors.rg : ""}
-                  error={touched.rg && Boolean(errors.rg)}
-                  label="RG"
-                  onChange={change.bind(null, "rg")}
-                  value={rg}
-                  fullWidth
-                  size="small"
-                />
-              </Grid>
-              <Grid item lg={4} md={4} sm={6} xs={12}>
-                <TextField
-                  id="orgaoEmissor"
-                  name="orgaoEmissor"
-                  helperText={touched.orgaoEmissor ? errors.orgaoEmissor : ""}
-                  error={touched.orgaoEmissor && Boolean(errors.orgaoEmissor)}
-                  label="Orgão emissor"
-                  onChange={change.bind(null, "orgaoEmissor")}
-                  value={orgaoEmissor}
-                  fullWidth
-                  size="small"
-                />
-              </Grid>
-              <Grid item lg={4} md={4} sm={6} xs={12}>
-                <InputMask
-                  mask="999.999.999-99"
-                  maskChar={null}
-                  onChange={change.bind(null, "cpf")}
-                  value={cpf}
-                >
-                  {() => (
-                    <TextField
-                      id="cpf"
-                      name="cpf"
-                      helperText={touched.cpf ? errors.cpf : ""}
-                      error={touched.cpf && Boolean(errors.cpf)}
-                      label="CPF"
-                      fullWidth
-                      size="small"
-                    />
-                  )}
-                </InputMask>
-              </Grid>
-              <Grid item lg={3} md={3} sm={6} xs={12}>
-                <InputMask
-                  mask="99999-999"
-                  maskChar={null} /*value={formik.values.document}*/
-                  onChange={change.bind(null, "cep")}
-                  onBlur={(e) => blur(e)}
-                >
-                  {() => (
-                    <TextField
-                      id="cep"
-                      name="cep"
-                      label="CEP"
-                      fullWidth
-                      size="small"
-                    />
-                  )}
-                </InputMask>
-              </Grid>
-              <Grid item lg={9} md={9} sm={12} xs={12}>
-                <TextField
-                  id="endereco"
-                  name="endereco"
-                  helperText={touched.endereco ? errors.endereco : ""}
-                  error={touched.endereco && Boolean(errors.endereco)}
-                  label="Endereço"
-                  onChange={change.bind(null, "endereco")}
-                  value={endereco}
-                  fullWidth
-                  size="small"
-                />
-              </Grid>
-              <Grid item lg={3} md={3} sm={3} xs={12}>
-                <TextField
-                  id="numero"
-                  name="numero"
-                  helperText={touched.numero ? errors.numero : ""}
-                  error={touched.numero && Boolean(errors.numero)}
-                  label="Número"
-                  onChange={change.bind(null, "numero")}
-                  value={numero}
-                  fullWidth
-                  size="small"
-                />
-              </Grid>
-              <Grid item lg={5} md={9} sm={9} xs={12}>
-                <TextField
-                  id="complemento"
-                  name="complemento"
-                  label="Complemento"
-                  fullWidth
-                  size="small"
-                />
-              </Grid>
-              <Grid item lg={4} md={4} sm={6} xs={12}>
-                <TextField
-                  id="bairro"
-                  name="bairro"
-                  helperText={touched.bairro ? errors.bairro : ""}
-                  error={touched.bairro && Boolean(errors.bairro)}
-                  label="Bairro"
-                  onChange={change.bind(null, "bairro")}
-                  value={bairro}
-                  fullWidth
-                  size="small"
-                />
-              </Grid>
-              <Grid item lg={3} md={5} sm={6} xs={12}>
-                <TextField
-                  id="cidade"
-                  name="cidade"
-                  helperText={touched.cidade ? errors.cidade : ""}
-                  error={touched.cidade && Boolean(errors.cidade)}
-                  label="Cidade"
-                  onChange={change.bind(null, "cidade")}
-                  value={cidade}
-                  fullWidth
-                  size="small"
-                />
-              </Grid>
-              <Grid item lg={2} md={3} sm={6} xs={12}>
-                <TextField
-                  id="estado"
-                  name="estado"
-                  helperText={touched.estado ? errors.estado : ""}
-                  error={touched.estado && Boolean(errors.estado)}
-                  label="Estado"
-                  onChange={change.bind(null, "estado")}
-                  value={estado}
-                  fullWidth
-                  size="small"
-                />
-              </Grid>
-              <Grid item lg={3} md={4} sm={6} xs={12}>
-                <TextField
-                  id="nacionalidade"
-                  name="nacionalidade"
-                  helperText={touched.nacionalidade ? errors.nacionalidade : ""}
-                  error={touched.nacionalidade && Boolean(errors.nacionalidade)}
-                  label="Nacionalidade"
-                  onChange={change.bind(null, "nacionalidade")}
-                  value={nacionalidade}
-                  fullWidth
-                  size="small"
-                />
-              </Grid>
-              <Grid item lg={12} md={12}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                >
-                  Enviar
-                </Button>
+                    <Grid item lg={4} md={4} sm={6} xs={12}>
+                      <TextFieldWrapper name="rg" label="RG" />
+                    </Grid>
+                    <Grid item lg={4} md={4} sm={6} xs={12}>
+                      <TextFieldWrapper
+                        name="orgaoEmissor"
+                        label="Orgão Emissor"
+                      />
+                    </Grid>
+                    <Grid item lg={4} md={4} sm={6} xs={12}>
+                      <TextFieldWrapper name="cpf" label="CPF" />
+                    </Grid>
+                    <Grid item lg={3} md={3} sm={6} xs={12}>
+                      <TextFieldWrapper
+                        name="cep"
+                        label="CEP"
+                        onBlur={(e) => handleBlur(e, setFieldValue)}
+                      />
+                    </Grid>
+                    <Grid item lg={9} md={9} sm={12} xs={12}>
+                      <TextFieldWrapper name="endereco" label="Endereço" />
+                    </Grid>
+                    <Grid item lg={3} md={3} sm={3} xs={12}>
+                      <TextFieldWrapper name="numero" label="Número" />
+                    </Grid>
+                    <Grid item lg={5} md={9} sm={9} xs={12}>
+                      <TextFieldWrapper
+                        name="complemento"
+                        label="Complemento"
+                      />
+                    </Grid>
+                    <Grid item lg={4} md={4} sm={6} xs={12}>
+                      <TextFieldWrapper name="bairro" label="Bairro" />
+                    </Grid>
+                    <Grid item lg={3} md={5} sm={6} xs={12}>
+                      <TextFieldWrapper name="cidade" label="Cidade" />
+                    </Grid>
+                    <Grid item lg={2} md={3} sm={6} xs={12}>
+                      <TextFieldWrapper name="estado" label="Estado" />
+                    </Grid>
+                    <Grid item lg={3} md={4} sm={6} xs={12}>
+                      <TextFieldWrapper
+                        name="nacionalidade"
+                        label="Nacionalidade"
+                      />
+                    </Grid>
+                  </Grid>
+                  <Grid
+                    container
+                    justifyContent="center"
+                    className="button--group"
+                  >
+                    <Grid
+                      item
+                      lg={4}
+                      md={4}
+                      sm={6}
+                      xs={6}
+                      className="button--item"
+                    >
+                      <ButtonResetWrapper>Resetar</ButtonResetWrapper>
+                    </Grid>
+                    <Grid
+                      item
+                      lg={4}
+                      md={4}
+                      sm={6}
+                      xs={6}
+                      className="button--item"
+                    >
+                      <ButtonSubmitWrapper>Enviar</ButtonSubmitWrapper>
+                    </Grid>
+                  </Grid>
+                </Paper>
               </Grid>
             </Grid>
-          </form>
-        </Paper>
-      </Grid>
-    </Grid>
+          </Form>
+        )}
+      </Formik>
+    </>
   );
 }
 
-export default Form;
+export default FormComponent;
