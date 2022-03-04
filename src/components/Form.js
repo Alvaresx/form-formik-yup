@@ -98,10 +98,22 @@ function FormComponent() {
                 md={7}
                 sm={8}
                 xs={10}
-                className="main--grid--item"
+                sx={{
+                  position: "relative",
+                  top: "80px",
+                  paddingBottom: "80px",
+                }}
               >
-                <Paper elevation={3} className="paper--form">
-                  <Typography className="form--title">
+                <Paper elevation={3} sx={{ padding: "24px" }}>
+                  <Typography
+                    sx={{
+                      textAlign: "center",
+                      fontSize: "20px",
+                      fontWeight: "700",
+                      color: "#000000b3",
+                      padding: "15px 0",
+                    }}
+                  >
                     Formulário Cadastral
                   </Typography>
                   <Grid container spacing={2}>
@@ -178,7 +190,7 @@ function FormComponent() {
                   <Grid
                     container
                     justifyContent="center"
-                    className="button--group"
+                    sx={{ marginTop: "20px" }}
                   >
                     <Grid
                       item
@@ -186,7 +198,7 @@ function FormComponent() {
                       md={4}
                       sm={6}
                       xs={6}
-                      className="button--item"
+                      sx={{ margin: "9px" }}
                     >
                       <ButtonResetWrapper>Resetar</ButtonResetWrapper>
                     </Grid>
@@ -196,7 +208,7 @@ function FormComponent() {
                       md={4}
                       sm={6}
                       xs={6}
-                      className="button--item"
+                      sx={{ margin: "9px" }}
                     >
                       <ButtonSubmitWrapper>Enviar</ButtonSubmitWrapper>
                     </Grid>
