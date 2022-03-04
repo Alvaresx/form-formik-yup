@@ -30,9 +30,14 @@ O projeto foi criado pensando na **responsividade**, possibilitando ao usuário 
 
 Para executar o projeto, execute o comando `npm start`, acessando em http://localhost:3000 .
 
+### 💭 Melhorias futuras
+
+- Aplicar **máscara** nos seguintes campos: Data de Nascimento, telefone, CPF e CEP. O uso de **máscaras** nos campos melhora a **experiência do usuário**, fazendo ele se sentir mais seguro com a informação inserida e previnindo possíveis **erros** antes que o usuário possa prosseguir com a digitação.
+
 ### 🙋‍♀️ Autor
 
 **Mariana Alvares da Silva Pinto** - _Desenvolvedora Front-end Júnior_ </br>
 ✉️ **E-mail**: mariana11areal@hotmail.com </br>
-📞 **Telefone/Whatsapp:** (24) 999987-7010
+📞 **Telefone/Whatsapp:** (24) 999987-7010 </br>
+📌 **Link para acessar o projeto:** https://form-formik-yup.vercel.app/
 
