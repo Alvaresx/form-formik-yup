@@ -9,7 +9,7 @@ import SelectWrapper from "./FormComponents/Select";
 import ButtonSubmitWrapper from "./FormComponents/Buttons/submitIndex";
 import ButtonResetWrapper from "./FormComponents/Buttons/resetIndex";
 import { useSnackbar } from "notistack";
-import { maskCPF, maskCEP, maskDate, maskPhone, maskPhone2 } from "./Masks/Masks";
+import { maskCPF, maskCEP, maskDate, maskPhone } from "./Masks/Masks";
 
 function FormComponent() {
   const { enqueueSnackbar } = useSnackbar();
