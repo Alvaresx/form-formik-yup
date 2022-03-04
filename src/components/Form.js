@@ -9,7 +9,7 @@ import SelectWrapper from "./FormComponents/Select";
 import ButtonSubmitWrapper from "./FormComponents/Buttons/submitIndex";
 import ButtonResetWrapper from "./FormComponents/Buttons/resetIndex";
 import { useSnackbar } from "notistack";
-import { maskCPF, maskCEP, maskDate, maskPhone } from "./Masks/Masks";
+import { maskCPF, maskCEP, maskDate, maskPhone, maskPhone2 } from "./Masks/Masks";
 
 function FormComponent() {
   const { enqueueSnackbar } = useSnackbar();
@@ -21,8 +21,8 @@ function FormComponent() {
       .min(10, "Insira uma data válida"),
     telefone: Yup.string()
       .required("Telefone é obrigatório")
-      .min(14, "Insira um telefone válido!")
-      .max(15, "Insira um telefone válido!"),
+      .min(13, "Insira um telefone válido!")
+      .max(14, "Insira um telefone válido!"),
     email: Yup.string()
       .required("E-mail é obrigatório")
       .email("Insira um e-mail válido"),
