@@ -9,6 +9,7 @@ import SelectWrapper from "./FormComponents/Select";
 import ButtonSubmitWrapper from "./FormComponents/Buttons/submitIndex";
 import ButtonResetWrapper from "./FormComponents/Buttons/resetIndex";
 import { useSnackbar } from "notistack";
+import { maskCPF, maskCEP, maskDate, maskPhone } from "./Masks/Masks";
 
 function FormComponent() {
   const { enqueueSnackbar } = useSnackbar();
@@ -131,10 +132,22 @@ function FormComponent() {
                       <TextFieldWrapper
                         name="dataNascimento"
                         label="Data Nascimento"
+                        onKeyUp={(e) =>
+                          setFieldValue(
+                            "dataNascimento",
+                            maskDate(e.target.value)
+                          )
+                        }
                       />
                     </Grid>
                     <Grid item lg={3} md={6} sm={6} xs={12}>
-                      <TextFieldWrapper name="telefone" label="Telefone" />
+                      <TextFieldWrapper
+                        name="telefone"
+                        label="Telefone"
+                        onKeyUp={(e) =>
+                          setFieldValue("telefone", maskPhone(e.target.value))
+                        }
+                      />
                     </Grid>
                     <Grid item lg={6} md={12} sm={12} xs={12}>
                       <TextFieldWrapper name="email" label="E-mail" />
@@ -150,13 +163,22 @@ function FormComponent() {
                       />
                     </Grid>
                     <Grid item lg={4} md={4} sm={6} xs={12}>
-                      <TextFieldWrapper name="cpf" label="CPF" />
+                      <TextFieldWrapper
+                        name="cpf"
+                        label="CPF"
+                        onKeyUp={(e) =>
+                          setFieldValue("cpf", maskCPF(e.target.value))
+                        }
+                      />
                     </Grid>
                     <Grid item lg={3} md={3} sm={6} xs={12}>
                       <TextFieldWrapper
                         name="cep"
                         label="CEP"
                         onBlur={(e) => handleBlur(e, setFieldValue)}
+                        onKeyUp={(e) =>
+                          setFieldValue("cep", maskCEP(e.target.value))
+                        }
                       />
                     </Grid>
                     <Grid item lg={9} md={9} sm={12} xs={12}>
