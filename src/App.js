@@ -1,11 +1,15 @@
 import React from "react";
 import "./App.css";
+import "../src/components/Form.css";
 import FormComponent from "./components/Form";
+import { SnackbarProvider } from "notistack";
 
 function App() {
   return (
     <>
-      <FormComponent />
+      <SnackbarProvider>
+        <FormComponent />
+      </SnackbarProvider>
     </>
   );
 }

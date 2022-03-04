@@ -1,5 +1,4 @@
 import React from "react";
-import "./Form.css";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { cpf } from "cpf-cnpj-validator";
@@ -9,8 +8,10 @@ import TextFieldWrapper from "./FormComponents/Textfield";
 import SelectWrapper from "./FormComponents/Select";
 import ButtonSubmitWrapper from "./FormComponents/Buttons/submitIndex";
 import ButtonResetWrapper from "./FormComponents/Buttons/resetIndex";
+import { useSnackbar } from "notistack";
 
 function FormComponent() {
+  const { enqueueSnackbar } = useSnackbar();
   const validationSchema = Yup.object({
     nome: Yup.string().required("Nome é obrigatório"),
     genero: Yup.string().required("Gênero é obrigatório"),
@@ -60,12 +61,19 @@ function FormComponent() {
 
   const handleBlur = (e, setFieldValue) => {
     if (e.target.value !== "") {
-      cep(e.target.value).then((res) => {
-        setFieldValue("endereco", res.street);
-        setFieldValue("bairro", res.neighborhood);
-        setFieldValue("cidade", res.city);
-        setFieldValue("estado", res.state);
-      });
+      cep(e.target.value)
+        .then((res) => {
+          setFieldValue("endereco", res.street);
+          setFieldValue("bairro", res.neighborhood);
+          setFieldValue("cidade", res.city);
+          setFieldValue("estado", res.state);
+        })
+        .catch((err) => {
+          enqueueSnackbar("CEP não encontrado. Tente novamente!", {
+            variant: "error",
+            anchorOrigin: { horizontal: "right", vertical: "top" },
+          });
+        });
     }
   };
 
@@ -75,7 +83,10 @@ function FormComponent() {
         initialValues={values}
         validationSchema={validationSchema}
         onSubmit={(values) => {
-          console.log(values);
+          enqueueSnackbar("Formulário enviado com sucesso!", {
+            variant: "success",
+            anchorOrigin: { horizontal: "right", vertical: "top" },
+          });
         }}
       >
         {({ setFieldValue }) => (
